@@ -17,8 +17,8 @@ def getDataset(file_path):
         print(error)
 
 def makeData(data):
-    titles = data['title'].apply(str)[:200]
-    contents = data['text'].apply(str)[:200]
+    titles = data['title'].apply(str)
+    contents = data['text'].apply(str)
 
     return titles, contents
         
