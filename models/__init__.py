@@ -196,7 +196,7 @@ def train(model, input, output, device, useTitle):
     else:
         criterion = nn.CrossEntropyLoss()
         optimizer = opt.Adam(model.parameters(), lr=0.001)
-        scheduler = opt.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5, factor=0.1, verbose=True, mode='min')
+        scheduler = opt.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5, factor=0.4, verbose=True, mode='min')
 
         # dataset = TensorDataset(input, output)
         train_data = DataLoader(TensorDataset(input[:train_size], output[:train_size]), batch_size=batch_size, shuffle=True)
