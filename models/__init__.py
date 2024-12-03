@@ -20,6 +20,7 @@ from models.CNN_BILSTM import CNNnBiLSTM
 from models.Transformer import Transformer
 from models.GRU import GRU
 from models.BiGRU import BiGRU
+from constant import DRIVE_PATH
 
 with open('models/global_config.json', 'r') as file:
     config = json.load(file)
@@ -195,6 +196,8 @@ def train(model, input, output, device, useTitle):
     else:
         criterion = nn.CrossEntropyLoss()
         optimizer = opt.Adam(model.parameters(), lr=0.001)
+        scheduler = opt.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5, factor=0.1, verbose=True, mode='min')
+
         # dataset = TensorDataset(input, output)
         train_data = DataLoader(TensorDataset(input[:train_size], output[:train_size]), batch_size=batch_size, shuffle=True)
         valid_data = DataLoader(TensorDataset(input[train_size:train_size+val_size], output[train_size:train_size+val_size]), batch_size=batch_size, shuffle=True)
@@ -258,11 +261,17 @@ def train(model, input, output, device, useTitle):
                 torch.save(model.state_dict(), f'res/models/{direction}/{model_direction}/{model.model_name}.pth')
                 best_acc = accuracy
                 best_loss = avg_val_loss
-                print('Model saved, current accuracy:', best_acc)
+                print('Model saved locally, current accuracy:', best_acc)
+
+            scheduler.step(avg_val_loss)
 
         # Test model performance
         test_bar = tqdm(test_data, desc=f"Epoch {epoch + 1}/{num_epoch}:")
         model.load_state_dict(torch.load(f'res/models/{direction}/{model_direction}/{model.model_name}.pth'))
+        # Save model to Drive
+        torch.save(model.state_dict(), f'{DRIVE_PATH}/models/{direction}/{model_direction}/{model.model_name}.pth')
+        print(f'MODEL saved - {DRIVE_PATH}/models/{direction}/{model_direction}/{model.model_name}.pth')
+
         model.eval()
 
         predicted = []
@@ -289,10 +298,10 @@ def train(model, input, output, device, useTitle):
         report = classification_report(label, predicted)
         print(report)
 
-    # Save report
-    with open(f'res/report/{direction}/{model_direction}/{model.model_name}.txt', 'w') as file:
+    # Save report to Drive
+    with open(f'{DRIVE_PATH}/report/{direction}/{model_direction}/{model.model_name}.txt', 'w') as file:
         file.write(report)
-    print(f'REPORT saved - res/report/{direction}/{model_direction}/{model.model_name}.txt')
+    print(f'REPORT saved - {DRIVE_PATH}/report/{direction}/{model_direction}/{model.model_name}.txt')
 
     # Visualize model val train processing
     plt.figure()
@@ -301,7 +310,8 @@ def train(model, input, output, device, useTitle):
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend()
-    plt.savefig(f'res/train_process/{direction}/{model_direction}/{model.model_name}.png')
+    # Save image to Drive
+    plt.savefig(f'{DRIVE_PATH}/train_process/{direction}/{model_direction}/{model.model_name}.png')
     plt.close()
 
-    print(f'Image saved - res/train_process/{direction}/{model_direction}/{model.model_name}.png')
+    print(f'Image saved - {DRIVE_PATH}/train_process/{direction}/{model_direction}/{model.model_name}.png')
