@@ -3,6 +3,7 @@ import torch
 import torchtext.vocab as tvocab
 import numpy as np
 import math
+from constant import DRIVE_PATH
 from feature_extract.vocabulary import Vocabulary
 
 from constant import PHOBERT_VER, PHOBERT_BATCH_SIZE, MAX_LEN
@@ -45,7 +46,7 @@ def getWordEmbedding(word_embedding, corpus):
 
 def usingPhow2v(device, texts):
     print('EXTRACTING FEATURE FROM PHOW2V')
-    word_embedding = tvocab.Vectors(name='res/features/phow2v_300.txt', unk_init=torch.Tensor.normal_)
+    word_embedding = tvocab.Vectors(name=f'{DRIVE_PATH}/phow2v_300.txt', unk_init=torch.Tensor.normal_)
     print(f'Phow2v original shape: {word_embedding.vectors.shape}')
     
     vocab = Vocabulary()
