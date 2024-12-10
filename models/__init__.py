@@ -142,7 +142,7 @@ def startTraining(device):
     input_shape = data.size()
 
     if key == '1':
-        train(LSTM(device=device, dropout=0.3, emb_tech=emb_tech, input_shape=input_shape), input=data, output=rating, device=device, useTitle=useTitle)
+        train(LSTM(device=device, dropout=0.1, emb_tech=emb_tech, input_shape=input_shape), input=data, output=rating, device=device, useTitle=useTitle)
     elif key == '2':
         train(BiLSTM(device=device, dropout=0.1, emb_tech=emb_tech, input_shape=input_shape), input=data, output=rating, device=device, useTitle=useTitle)      
     elif key == '3':
@@ -159,6 +159,8 @@ def startTraining(device):
         train(BiGRU(device=device, input_shape=input_shape, emb_tech=emb_tech, dropout=0.1), input=data, output=rating, device=device, useTitle=useTitle)
     elif key == '9':
         train(Transformer(device=device, input_shape=input_shape, emb_tech=emb_tech, dropout=0.1), input=data, output=rating, device=device, useTitle=useTitle)
+    elif key == '10':
+        train(CNN(device=device, input_shape=input_shape, emb_tech=emb_tech, dropout=0.1), input=data, output=rating, device=device, useTitle=useTitle)
     else:
         print('Wrong key of model, please choose again')
 
@@ -195,8 +197,8 @@ def train(model, input, output, device, useTitle):
 
     else:
         criterion = nn.CrossEntropyLoss()
-        optimizer = opt.Adam(model.parameters(), lr=0.001)
-        scheduler = opt.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5, factor=0.4, verbose=True, mode='min')
+        optimizer = opt.Adam(model.parameters(), lr=0.000001)
+        scheduler = opt.lr_scheduler.ReduceLROnPlateau(optimizer, patience=25, factor=0.4, verbose=True, mode='min')
 
         # dataset = TensorDataset(input, output)
         train_data = DataLoader(TensorDataset(input[:train_size], output[:train_size]), batch_size=batch_size, shuffle=True)

@@ -1,0 +1,5 @@
+huggingface_hub
+transformers
+tiktoken
+protobuf
+sentencepiece
