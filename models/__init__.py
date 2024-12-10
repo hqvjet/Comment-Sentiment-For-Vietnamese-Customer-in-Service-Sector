@@ -137,7 +137,7 @@ def startTraining(device):
         data = content
     useTitle = False if key == '2' else True
 
-    key = input('Choose one of these classification to train:\n1. LSTM\n2. BiLSTM\n3. CNN\n4. XGBoost\n5. FC\n6. LG\n7. Ensemble CNN LSTM\n8. Ensemble CNN BiLSTM\nYour Input: ')
+    key = input('Choose one of these classification to train:\n1. LSTM\n2. BiLSTM\n3. XGBoost\n4. LG\n5. Ensemble CNN LSTM\n6. Ensemble CNN BiLSTM\n7. GRU\n8. BiGRU\n9. Transformer\n10.CNN\nYour Input: ')
     emb_tech = 1 if source == 'phobert' else 2
     input_shape = data.size()
 
