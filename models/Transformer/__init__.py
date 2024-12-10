@@ -18,16 +18,7 @@ class Transformer(nn.Module):
         self.num_layers = config['num_layers']
         self.emb_tech = emb_tech
 
-        self.encoder = nn.TransformerEncoder(
-            nn.TransformerEncoderLayer(
-                d_model=input_shape[-1], nhead=8,
-                dim_feedforward=input_shape[-1] * 4,
-                dropout=dropout,
-                activation='relu'
-            ),
-            num_layers=self.num_layers
-        )
-
+        self.attention = nn.MultiheadAttention(embed_dim=self.hidden_size, num_heads=6, batch_first=True)
         self.fc = nn.Linear(self.hidden_size, num_classes)
         self.softmax = nn.Softmax(dim=1)
 
@@ -35,10 +26,10 @@ class Transformer(nn.Module):
         if self.emb_tech == 1:
             x = x.unsqueeze(1)
 
-        trans_out = self.encoder(x.permute(1, 0, 2))
+        attn_output, _ = self.attention(x, x, x)
+        pooled = attn_output.mean(dim=1)
 
-        cls_tok = trans_out[0, :, :]
-        out = self.fc(cls_tok)
+        out = self.fc(pooled)
         out = self.softmax(out)
 
         return out
